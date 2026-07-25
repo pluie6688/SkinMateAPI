@@ -23,10 +23,29 @@ async def analyze_skin(
     agent = SkinAnalysisAgent()
 
 
-    result = await agent.execute(
+    data = await agent.execute(
         request.imageUri
     )
 
 
-    # 直接返回小艺插件需要的格式
-    return result
+    return {
+
+        "name": "analyzeSkin",
+
+        "streamInfo": {
+
+            "streamContent":
+            data["reply"]["streamInfo"]["streamContent"],
+
+            "streamingTextId":
+            "skinmate001",
+
+            "streamType":
+            "final",
+
+            "textType":
+            "markdown"
+
+        }
+
+    }

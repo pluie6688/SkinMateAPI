@@ -4,11 +4,9 @@ from pydantic import BaseModel
 from agent import SkinAnalysisAgent
 
 
-
 app = FastAPI(
     title="SkinMate Agent API"
 )
-
 
 
 class SkinRequest(BaseModel):
@@ -22,23 +20,13 @@ async def analyze_skin(
     request: SkinRequest
 ):
 
-
     agent = SkinAnalysisAgent()
 
 
-    data = await agent.execute(
+    result = await agent.execute(
         request.imageUri
     )
 
 
-    return {
-
-        "success": True,
-
-        "message":
-        "皮肤分析完成",
-
-        "data":
-        data
-
-    }
+    # 直接返回小艺插件需要的格式
+    return result

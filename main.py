@@ -5,8 +5,8 @@ from openai import OpenAI
 
 app = FastAPI()
 
-# ⚠️ 请确保这里填入了你真实的硅基流动 API Key
-SILICONFLOW_API_KEY = "sk-xxxxxxxxxxxxxxxx" 
+# 1. 请在这里填入你真实的硅基流动 API Key
+SILICONFLOW_API_KEY = "sk-xxxxxxxxxxxxxxxx"  # 👈 换成你的 sk-xxx
 
 client = OpenAI(
     api_key=SILICONFLOW_API_KEY,
@@ -22,9 +22,9 @@ async def analyze_skin(request: SkinAnalysisRequest):
     image_url = request.imageUri
     
     try:
-        # 调用视觉大模型
+        # 2. 使用 7B 轻量级视觉模型，确保在小艺规定的极短超时时间内秒级响应
         response = client.chat.completions.create(
-            model="Qwen/Qwen2-VL-72B-Instruct",  
+            model="Qwen/Qwen2-VL-7B-Instruct",  
             messages=[
                 {
                     "role": "user",
@@ -35,31 +35,36 @@ async def analyze_skin(request: SkinAnalysisRequest):
                         },
                         {
                             "type": "text", 
-                            "text": "分析这张皮肤图片，提供 Markdown 格式的护肤建议。"
+                            "text": (
+                                "你是一位专业且温和的皮肤健康护理助手。请简要分析这张图片中的皮肤状况，"
+                                "从【基础肤质评估】、【潜在问题】和【护肤建议】三个方面进行总结，"
+                                "并输出 Markdown 格式报告。"
+                            )
                         }
                     ]
                 }
             ],
-            max_tokens=500
+            max_tokens=400  # 限制最大生成长度，防止超时
         )
         
         markdown_content = response.choices[0].message.content
 
     except Exception as e:
-        # 🚨 关键：把真实的错误堆栈直接传回前端，方便我们一眼看出是什么问题
+        # 如果中间出现任何异常，直接把错误信息作为 Markdown 文本返回，方便在前端排查
         error_detail = traceback.format_exc()
         markdown_content = (
-            "## ❌ 报错调试信息\n\n"
-            f"捕获到异常：`{str(e)}`\n\n"
+            "## ⚠️ 后端调用异常\n\n"
+            f"错误原因：`{str(e)}`\n\n"
             "```text\n"
             f"{error_detail}\n"
             "```"
         )
 
+    # 3. 严格匹配小艺要求的返回格式
     return {
         "name": "analyzeSkin",
         "streamInfo": {
-            "streamContent": clean_content,
+            "streamContent": markdown_content,
             "streamingTextId": "skinmate001",
             "streamType": "final",
             "textType": "markdown"

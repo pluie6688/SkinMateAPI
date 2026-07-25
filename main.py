@@ -10,7 +10,6 @@ app = FastAPI(
 
 
 class SkinRequest(BaseModel):
-
     imageUri: str
 
 
@@ -23,9 +22,25 @@ async def analyze_skin(
     agent = SkinAnalysisAgent()
 
 
-    data = await agent.execute(
+    result = await agent.execute(
         request.imageUri
     )
+
+
+    # 防止结构变化导致500
+    content = "皮肤分析完成"
+
+
+    try:
+        content = (
+            result
+            .get("reply", {})
+            .get("streamInfo", {})
+            .get("streamContent", content)
+        )
+
+    except Exception:
+        pass
 
 
     return {
@@ -34,17 +49,13 @@ async def analyze_skin(
 
         "streamInfo": {
 
-            "streamContent":
-            data["reply"]["streamInfo"]["streamContent"],
+            "streamContent": content,
 
-            "streamingTextId":
-            "skinmate001",
+            "streamingTextId": "skinmate001",
 
-            "streamType":
-            "final",
+            "streamType": "final",
 
-            "textType":
-            "markdown"
+            "textType": "markdown"
 
         }
 

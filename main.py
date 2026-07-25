@@ -49,13 +49,13 @@ async def analyze_skin(
 
         "streamInfo": {
 
-            "streamContent": content,
+            "textType": "markdown"
 
             "streamingTextId": "skinmate001",
 
             "streamType": "final",
 
-            "textType": "markdown"
+            "streamContent": content,
 
         }
 

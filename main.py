@@ -1,8 +1,32 @@
-# 引入基础库（如果 main.py 顶部已经有，就不需要重复写）
-# from fastapi import FastAPI
-# from pydantic import BaseModel
+import random
+from fastapi import FastAPI
 
-# 假设如果你需要校验参数可以保留这个，为了极致防报错，我们直接用 dict 接收一切小艺传过来的参数
+app = FastAPI()
+
+# 1. 皮肤检测假数据接口
+@app.post("/analyzeSkin")
+async def analyze_skin(request: dict):
+    lesion_size = round(random.uniform(1.2, 3.5), 1)
+    confidence = random.randint(86, 95)
+    
+    markdown_content = (
+        f"## 🩺 AI 皮肤病学辅助筛查\n\n"
+        f"- **病灶形态**：局部可见边界较为清晰的红斑/红色斑块，直径约 `{lesion_size} cm`。\n"
+        f"- **AI 匹配置信度**：`{confidence}%` \n"
+        f"- **疑似方向**：接触性皮炎或急性湿疹倾向。\n"
+        f"- **建议**：保持患处清洁干爽，若红斑面积持续扩大请及时就医。"
+    )
+    
+    return {
+        "streamInfo": {
+            "streamContent": markdown_content,
+            "streamingTextId": "skin_001",
+            "streamType": "final",
+            "textType": "markdown"
+        }
+    }
+
+# 2. 建立健康档案假数据接口
 @app.post("/createHealthProfile")
 async def create_health_profile(request: dict):
     markdown_content = (
@@ -14,20 +38,16 @@ async def create_health_profile(request: dict):
         "- **用户**：首席体验官\n"
         "- **年龄**：20 岁\n"
         "- **基础肤质**：混合偏敏感肌\n"
-        "- **已知过敏史**：无明显药物过敏，对部分换季花粉及强效酸类护肤品敏感\n\n"
+        "- **已知过敏史**：对部分换季花粉敏感\n\n"
         "### 📊 初始健康评估与规划\n"
-        "- **皮肤屏障状态**：当前处于亚健康波动期，T区偶发油脂分泌过剩，面颊两侧伴有轻度泛红。\n"
-        "- **智能管家建议**：\n"
-        "  1. 已为您自动开启『智能用药提醒』功能。\n"
-        "  2. 建议您每周使用一次本系统的【AI 皮肤筛查】，以便动态追踪屏障修复曲线。\n\n"
-        "*（系统提示：您的健康数据已通过端云加密技术隔离存储，全方位保障隐私安全。）*"
+        "- **皮肤屏障状态**：T区偶发油脂分泌过剩，面颊两侧伴有轻度泛红。\n"
+        "- **智能管家建议**：已为您开启智能用药提醒，建议每周进行一次AI皮肤筛查。"
     )
-
-    # 依然采用最纯净的华为官方 streamInfo 根节点结构
+    
     return {
         "streamInfo": {
             "streamContent": markdown_content,
-            "streamingTextId": "create_profile_001",
+            "streamingTextId": "profile_001",
             "streamType": "final",
             "textType": "markdown"
         }

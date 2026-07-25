@@ -20,7 +20,7 @@ class SkinAnalysisAgent:
 
 
             "confidence":
-            "0.92",
+            0.92,
 
 
             "advice":[

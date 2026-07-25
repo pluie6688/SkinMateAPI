@@ -1,11 +1,12 @@
+import traceback
 from fastapi import FastAPI
 from pydantic import BaseModel
 from openai import OpenAI
 
 app = FastAPI()
 
-# 1. 初始化客户端（使用硅基流动的 API key 和接口地址）
-SILICONFLOW_API_KEY = "sk-ahrojxfubbxuogipnruxrtijaydlbwsquidaxozpebyocjtl"  # 👈 替换成你刚刚复制的 API Key
+# ⚠️ 请确保这里填入了你真实的硅基流动 API Key
+SILICONFLOW_API_KEY = "sk-xxxxxxxxxxxxxxxx" 
 
 client = OpenAI(
     api_key=SILICONFLOW_API_KEY,
@@ -21,9 +22,9 @@ async def analyze_skin(request: SkinAnalysisRequest):
     image_url = request.imageUri
     
     try:
-        # 2. 调用免费的视觉大模型 (Qwen2-VL)
+        # 调用视觉大模型
         response = client.chat.completions.create(
-            model="Qwen/Qwen2-VL-72B-Instruct",  # 视觉大模型
+            model="Qwen/Qwen2-VL-72B-Instruct",  
             messages=[
                 {
                     "role": "user",
@@ -34,31 +35,27 @@ async def analyze_skin(request: SkinAnalysisRequest):
                         },
                         {
                             "type": "text", 
-                            "text": (
-                                "你是一位专业且温和的皮肤健康护理助手。请仔细分析这张图片中的面部皮肤状况，"
-                                "从【基础肤质评估】、【潜在皮肤问题】和【针对性护肤建议】三个方面进行总结。"
-                                "请务必直接输出排版优雅的 Markdown 格式报告，语气保持专业、客观、有陪伴感，"
-                                "结尾请附带简短的免责声明（非医疗诊断）。"
-                            )
+                            "text": "分析这张皮肤图片，提供 Markdown 格式的护肤建议。"
                         }
                     ]
                 }
             ],
-            max_tokens=1000
+            max_tokens=500
         )
         
-        # 提取模型生成的真实分析 Markdown 文本
         markdown_content = response.choices[0].message.content
 
     except Exception as e:
-        # 增加容错：如果图片链接失效或 API 调用异常，返回优雅提示
+        # 🚨 关键：把真实的错误堆栈直接传回前端，方便我们一眼看出是什么问题
+        error_detail = traceback.format_exc()
         markdown_content = (
-            "## ⚠️ 皮肤分析暂时中断\n\n"
-            f"图像解析时遇到了点小状况（原因：`{str(e)}`）。\n\n"
-            "建议您重新拍摄一张**光线充足、面部清晰**的照片再次上传试试。"
+            "## ❌ 报错调试信息\n\n"
+            f"捕获到异常：`{str(e)}`\n\n"
+            "```text\n"
+            f"{error_detail}\n"
+            "```"
         )
 
-    # 3. 按照小艺要求的规范返回
     return {
         "name": "analyzeSkin",
         "streamInfo": {

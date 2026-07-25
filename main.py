@@ -59,7 +59,7 @@ async def analyze_skin(request: SkinAnalysisRequest):
     return {
         "name": "analyzeSkin",
         "streamInfo": {
-            "streamContent": markdown_content,
+            "streamContent": clean_content,
             "streamingTextId": "skinmate001",
             "streamType": "final",
             "textType": "markdown"

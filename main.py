@@ -46,11 +46,23 @@ async def analyze_skin(request: SkinAnalysisRequest):
         "*（免责声明：本全景报告由 AI 智能体辅助生成，不作为最终医学诊断依据，具体诊疗方案请遵医嘱。）*"
     )
 
-    return {
+    # 采用全网关兼容的双重保险结构（同时满足根节点直出与 dataReply 映射）
+    payload = {
         "streamInfo": {
             "streamContent": comprehensive_markdown,
             "streamingTextId": "skinmate_comprehensive_001",
             "streamType": "final",
             "textType": "markdown"
-        }
+        },
+        "dataReply": {
+            "streamInfo": {
+                "streamContent": comprehensive_markdown,
+                "streamingTextId": "skinmate_comprehensive_001",
+                "streamType": "final",
+                "textType": "markdown"
+            }
+        },
+        "displayText": "已为您生成全景健康与皮肤筛查报告。",
+        "ttsText": "已为您生成报告。"
     }
+    return payload

@@ -6,7 +6,7 @@ from openai import OpenAI
 app = FastAPI()
 
 # 1. 请在这里填入你真实的硅基流动 API Key
-SILICONFLOW_API_KEY = "sk-xxxxxxxxxxxxxxxx"  # 👈 换成你的 sk-xxx
+SILICONFLOW_API_KEY = "sk-ahrojxfubbxuogipnruxrtijaydlbwsquidaxozpebyocjtl"  # 👈 换成你的 sk-xxx
 
 client = OpenAI(
     api_key=SILICONFLOW_API_KEY,

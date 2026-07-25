@@ -7,45 +7,48 @@ class SkinAnalysisAgent:
     ):
 
         # 这里以后接真实AI模型
-        # 例如：
         # 图片分析
         # 大模型识别
         # 华为云AI服务
 
-result = {
 
-    "errorCode": "0",
+        result = {
 
-    "errorMessage": "",
+            "errorCode": "0",
 
-    "reply": {
+            "errorMessage": "",
 
-        "streamInfo": {
+            "reply": {
 
-            "streamContent":
-            """
-            ## 皮肤分析结果
+                "streamInfo": {
 
-            风险判断：
-            轻度痤疮风险
+                    "streamContent":
+                    """
+## 皮肤分析结果
 
-            置信度：
-            92%
+风险判断：
+轻度痤疮风险
 
-            护理建议：
-            - 注意防晒
-            - 保持皮肤清洁
-            - 加强保湿
-            """,
+置信度：
+92%
 
-            "streamingTextId":
-            "skinmate001",
+护理建议：
+- 注意防晒
+- 保持皮肤清洁
+- 加强保湿
+                    """,
 
-            "streamType":
-            "final",
+                    "streamingTextId":
+                    "skinmate001",
 
-            "textType":
-            "markdown"
+                    "streamType":
+                    "final",
+
+                    "textType":
+                    "markdown"
+                }
+            }
         }
-    }
-}
+
+
+        return result

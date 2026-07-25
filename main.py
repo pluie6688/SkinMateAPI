@@ -9,13 +9,13 @@ class SkinAnalysisRequest(BaseModel):
     apiLevel: str = ""
     query: str = ""
 
-# 1. 皮肤病智能筛查接口（针对红色斑块、皮损等核心创新点）
+# 1. 皮肤病智能筛查接口
 @app.post("/analyzeSkin")
 async def analyze_skin(request: SkinAnalysisRequest):
     lesion_size = round(random.uniform(1.2, 3.5), 1)
     confidence = random.randint(86, 95)
     
-    markdown_content = (
+    markdown_text = (
         f"## 🩺 AI 皮肤病学智能辅助筛查报告\n\n"
         f"> **检测编号**：`DERM-2026-AI-SCAN`  \n"
         f"> **多模态皮损特征提取完成**\n\n"
@@ -35,20 +35,25 @@ async def analyze_skin(request: SkinAnalysisRequest):
         f"*（免责声明：本报告由 AI 智能体辅助生成，不作为最终医学诊断依据，具体诊疗方案请遵医嘱。）*"
     )
 
+    # 严格按照华为小艺插件协议的标准双重嵌套返回
     return {
         "name": "analyzeSkin",
+        "outputCommands": {
+            "displayText": "已为您生成专业的皮肤健康筛查报告，请查看下方详情。",
+            "ttsText": "已为您生成皮肤健康筛查报告。"
+        },
         "streamInfo": {
-            "streamContent": markdown_content,
+            "streamContent": markdown_text,
             "streamingTextId": "skinmate001",
             "streamType": "final",
             "textType": "markdown"
         }
     }
 
-# 2. 个人健康档案接口（记录用户基本体征与既往病史）
+# 2. 个人健康档案接口
 @app.post("/healthProfile")
 async def health_profile(request: SkinAnalysisRequest):
-    markdown_content = (
+    markdown_text = (
         "## 📋 个人健康电子档案\n\n"
         "### 👤 基本健康概况\n"
         "- **档案编号**：`HEALTH-8892-XJTU`\n"
@@ -64,18 +69,22 @@ async def health_profile(request: SkinAnalysisRequest):
 
     return {
         "name": "healthProfile",
+        "outputCommands": {
+            "displayText": "已调出您的个人健康档案。",
+            "ttsText": "已调出健康档案。"
+        },
         "streamInfo": {
-            "streamContent": markdown_content,
+            "streamContent": markdown_text,
             "streamingTextId": "profile002",
             "streamType": "final",
             "textType": "markdown"
         }
     }
 
-# 3. 智能用药提醒接口（针对皮肤病治疗药物的定时与安全提醒）
+# 3. 智能用药提醒接口
 @app.post("/medicationReminder")
 async def medication_reminder(request: SkinAnalysisRequest):
-    markdown_content = (
+    markdown_text = (
         "## 💊 皮肤科智能用药与依从性提醒\n\n"
         "### 📅 今日皮肤用药计划\n"
         "- **[已完成] 08:00 AM**：氯雷他定片（10mg）—— *抗过敏，缓解局部红斑瘙痒*\n"
@@ -88,8 +97,12 @@ async def medication_reminder(request: SkinAnalysisRequest):
 
     return {
         "name": "medicationReminder",
+        "outputCommands": {
+            "displayText": "已为您生成今日皮肤用药与安全提醒。",
+            "ttsText": "已生成用药提醒。"
+        },
         "streamInfo": {
-            "streamContent": markdown_content,
+            "streamContent": markdown_text,
             "streamingTextId": "medmate003",
             "streamType": "final",
             "textType": "markdown"

@@ -23,7 +23,7 @@ async def analyze_skin(request: SkinAnalysisRequest):
     try:
         # 2. 调用免费的视觉大模型 (Qwen2-VL)
         response = client.chat.completions.create(
-            model="Qwen/Qwen2-VL-7B-Instruct",  # 视觉大模型
+            model="THUDM/glm-4v-9b",  # 视觉大模型
             messages=[
                 {
                     "role": "user",
